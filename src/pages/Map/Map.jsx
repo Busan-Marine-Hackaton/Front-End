@@ -1,19 +1,17 @@
-import { Marker, Popup, TileLayer, MapContainer } from "react-leaflet";
+import React from "react";
+import MapComponent from "./MapComponent";
+import NavBar from "../../components/NavBar";
 
-function Map() {
-  const position = [51.505, -0.09];
+const Map = () => {
   return (
-    <div className="w-full h-[100vh] bg-[#e7f0f1] flex flex-col items-center">
-      <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <Marker position={position}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
-      </MapContainer>
+    <div>
+      <div className="bg-[#4a688d] fixed top-0 w-full h-[70px] z-10 flex justify-center items-center text-[36px] text-white">
+        쓰레기 지도
+      </div>
+      <MapComponent />
+      <NavBar />
     </div>
   );
-}
+};
 
 export default Map;

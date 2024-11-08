@@ -6,8 +6,8 @@ function Main() {
   return (
     <div className="w-[100vw] h-[100vh] bg-[#e7f0f1] flex flex-col items-center">
       <div className="flex flex-col items-center">
-        <h2 className="text-[24px] mt-[72px]">환영합니다!</h2>
-        <h1 className="text-[36px]">줍장</h1>
+        <h2 className="text-[32px] mt-[72px]">환영합니다!</h2>
+        <h1 className="text-[60px]">줍장</h1>
       </div>
       <div className="bg-[#4a688d] w-full h-[600px] bottom-0 fixed rounded-t-xl">
         <img className="absolute -top-[240px]" src="/dolphin.png" />
@@ -33,7 +33,7 @@ function Main() {
           </div>
 
           <button
-            className="w-[50%] px-[12px] py-[12px] border-solid rounded-[30px] border-white"
+            className="w-[50%] px-[12px] py-[12px] border-2 border-white rounded-[30px] mt-[40px]"
             onClick={() => navigate("/map")}
           >
             다음

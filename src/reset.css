@@ -2,6 +2,12 @@
    v2.0 | 20110126
    License: none (public domain)
 */
+@font-face {
+  font-family: "Jua";
+  src: url("/Jua-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 
 html,
 body,
@@ -90,6 +96,8 @@ video {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+  font-family: "Jua", sans-serif;
+  font-weight: lighter;
 }
 /* HTML5 display-role reset for older browsers */
 article,
@@ -126,4 +134,9 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
 }
