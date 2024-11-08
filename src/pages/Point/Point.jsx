@@ -7,6 +7,7 @@ function Point() {
         포인트
       </div>
       <div className="mt-[200px]">문희상님 포인트입니다.</div>
+      <div className="mt-[20px] text-[32px]">1200 pts</div>
       <div className="px-[20px] bg-white w-full flex justify-center items-center mt-[20px]">
         <img src="/barcode.png" className=" w-[320px]" />
       </div>
