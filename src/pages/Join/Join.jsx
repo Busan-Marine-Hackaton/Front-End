@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useStore from "../../stores/useStore";
 
-function Main() {
+function Join() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [realId, setRealId] = useState("");
@@ -15,13 +15,13 @@ function Main() {
   const handleSubmit = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/enterprise/login?name=${encodeURIComponent(
+        `http://localhost:8080/enterprise?name=${encodeURIComponent(
           name
         )}&realId=${encodeURIComponent(realId)}&password=${encodeURIComponent(
           password
         )}`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -35,10 +35,10 @@ function Main() {
         console.log(name);
         console.log(realId);
         console.log(result.data);
-        navigate("/map");
+        navigate("/");
       } else {
         console.log(name, realId, password);
-        alert("로그인에 실패했습니다.");
+        alert("가입에 실패했습니다.");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -58,7 +58,7 @@ function Main() {
           src="/dolphin.png"
         />
         <div className="mt-[60px] ml-[40px] mr-[40px] text-white flex flex-col justify-center items-center gap-[16px] w-full">
-          <div className="text-[36px]">사용자 인증</div>
+          <div className="text-[36px]">가입하기</div>
           <div className="flex flex-col text-[24px] gap-[8px] w-[100%]">
             <label>기업명</label>
             <input
@@ -93,13 +93,7 @@ function Main() {
             className="w-[50%] px-[12px] py-[12px] border-2 border-white rounded-[30px]"
             onClick={handleSubmit}
           >
-            다음
-          </button>
-          <button
-            className="w-[50%] px-[12px] py-[12px] border-2 border-white rounded-[30px]"
-            onClick={() => navigate("/join")}
-          >
-            회원 등록하기
+            가입
           </button>
         </div>
       </div>
@@ -107,4 +101,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default Join;

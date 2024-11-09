@@ -1,88 +1,86 @@
+import React, { useState, useEffect } from "react";
 import NavBar from "../../components/NavBar";
-import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
+import useStore from "../../stores/useStore";
 
 function Ranking() {
-  const [userRank, setUserRank] = useState({ rank: 10, points: 1400 }); // 예시 데이터
+  const { name, enterpriseId } = useStore(); // zustand에서 name과 enterpriseId 가져옴
+  const [userRank, setUserRank] = useState(null); // 내 순위 데이터
   const [rankings, setRankings] = useState([]);
-  const [imageData, setImageData] = useState(null); // 이미지 데이터를 저장할 상태
-
-  // 실제 사람 이름 목록
-  const names = [
-    "홍길동",
-    "김철수",
-    "이영희",
-    "박지민",
-    "최민수",
-    "이수진",
-    "정재훈",
-    "김하늘",
-    "조민준",
-    "이서현",
-    "김지연",
-    "이재원",
-    "박상훈",
-    "정우성",
-    "최강희",
-    "한지민",
-    "김남길",
-    "송중기",
-    "이효리",
-    "윤아",
-  ];
 
   useEffect(() => {
-    const generateRankings = () => {
-      const ranks = [];
-      for (let i = 1; i <= 50; i++) {
-        const randomIndex = Math.floor(Math.random() * names.length); // 이름 배열에서 랜덤 인덱스 선택
-        ranks.push({
-          rank: i,
-          name: names[randomIndex],
-          points: 1500 - i * 10,
-        });
+    // 상위 15개 랭킹 데이터 가져오기
+    const fetchRankings = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/enterprise/ranking"
+        );
+        const result = await response.json();
+        if (result.code === 200) {
+          const topRankings = result.data.slice(0, 15);
+          setRankings(topRankings);
+        } else {
+          console.error("데이터를 가져오는 중 오류 발생:", result.message);
+        }
+      } catch (error) {
+        console.error("데이터를 가져오는 중 오류 발생:", error);
       }
-      setRankings(ranks);
     };
-    generateRankings();
-  }, []);
 
-  const handleScreenshot = () => {
+    // 내 순위 데이터 가져오기
+    const fetchUserRank = async () => {
+      if (enterpriseId) {
+        try {
+          const response = await fetch(
+            `http://localhost:8080/enterprise/${enterpriseId}/ranking`
+          );
+          const result = await response.json();
+          if (result.code === 200) {
+            setUserRank(result.data);
+          } else {
+            console.error(
+              "내 순위 데이터를 가져오는 중 오류 발생:",
+              result.message
+            );
+          }
+        } catch (error) {
+          console.error("내 순위 데이터를 가져오는 중 오류 발생:", error);
+        }
+      }
+    };
+
+    fetchRankings();
+    fetchUserRank();
+  }, [enterpriseId]);
+
+  const handleScreenshot = async () => {
     const element = document.getElementById("ranking-capture");
-    html2canvas(element).then((canvas) => {
-      const image = canvas.toDataURL("image/png");
-      setImageData(image); // 캡처한 이미지를 상태에 저장
-      downloadImage(image); // 이미지 다운로드
+    const canvas = await html2canvas(element);
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], "ranking-screenshot.png", {
+          type: "image/png",
+        });
+        shareImage(file);
+      }
     });
   };
 
-  const downloadImage = (imageData) => {
-    const link = document.createElement("a");
-    link.href = imageData;
-    link.download = "ranking-screenshot.png"; // 다운로드할 파일 이름
-    link.click();
-  };
-
-  const shareImage = () => {
-    if (!imageData) {
-      alert("먼저 스크린샷을 찍어주세요."); // 이미지 데이터가 없을 때 경고
-      return;
-    }
-
+  const shareImage = (file) => {
     const shareData = {
       title: "나의 랭킹 스크린샷",
       text: "해양쓰레기 수거 활동에 참여하세요!",
-      url: imageData,
+      files: [file],
     };
 
-    navigator
-      .share(shareData)
-      .then(() => {
-        console.log("공유 성공");
-      })
-      .catch((error) => {
-        console.error("공유 실패:", error);
-      });
+    if (navigator.share) {
+      navigator
+        .share(shareData)
+        .then(() => console.log("공유 성공"))
+        .catch((error) => console.error("공유 실패:", error));
+    } else {
+      alert("이 브라우저는 공유 기능을 지원하지 않습니다.");
+    }
   };
 
   return (
@@ -95,20 +93,27 @@ function Ranking() {
         className="flex flex-col items-center w-full max-w-[600px] bg-white rounded-[10px] mt-[100px] h-[70vh] overflow-y-scroll shadow-lg"
       >
         <h2 className="text-[24px] font-bold mt-5">내 순위</h2>
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 w-full bg-[#4a688d] text-white">
-          <span className="text-[18px]">{userRank.rank}위</span>
-          <span className="text-[18px]">{userRank.points} pts</span>
-        </div>
+        {userRank ? (
+          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 w-full bg-[#4a688d] text-white">
+            <span className="text-[18px]">{userRank.ranking}위</span>
+            <span className="text-[18px]">{name || "부산대학교"}</span>
+            <span className="text-[18px]">{userRank.point} pts</span>
+          </div>
+        ) : (
+          <p>내 순위 정보를 불러오는 중...</p>
+        )}
         <h2 className="text-[24px] font-bold mt-5">랭킹</h2>
         <ul className="w-full">
-          {rankings.map((user) => (
+          {rankings.map((institution, index) => (
             <li
-              key={user.rank}
-              className="flex items-center justify-between px-5 py-3 border-b border-gray-200"
+              key={institution.id || index}
+              className={`flex items-center justify-between px-5 py-3 ${
+                index >= 10 ? "border-t border-gray-200" : ""
+              }`}
             >
-              <span className="text-[18px]">{user.rank}위</span>
-              <span className="text-[18px]">{user.name}</span>
-              <span className="text-[18px]">{user.points} pts</span>
+              <span className="text-[18px]">{index + 1}위</span>
+              <span className="text-[18px]">{institution.name}</span>
+              <span className="text-[18px]">{institution.point} pts</span>
             </li>
           ))}
         </ul>
@@ -117,7 +122,7 @@ function Ranking() {
         onClick={handleScreenshot}
         className="p-2 mt-5 text-white bg-[#4a688d] rounded"
       >
-        스크린샷 찍기
+        스크린샷 찍고 공유하기
       </button>
       <NavBar />
     </div>

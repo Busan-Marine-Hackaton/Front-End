@@ -20,6 +20,9 @@ function Upload() {
     }
   };
 
+  // 모바일 기기 감지
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   return (
     <div className="w-full h-[100vh] bg-[#e7f0f1] flex flex-col items-center">
       <div className="bg-[#4a688d] fixed top-0 w-full h-[70px] z-10 flex justify-center items-center text-[36px] text-white">
@@ -42,7 +45,7 @@ function Upload() {
         <input
           type="file"
           accept="image/*"
-          capture="environment"
+          capture={isMobile ? "environment" : undefined}
           onChange={handleFileChange}
           style={{ display: "none" }}
           id="file-upload"

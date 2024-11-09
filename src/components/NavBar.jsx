@@ -13,8 +13,8 @@ function NavBar() {
         쓰레기 지도
       </button>
       <div className="h-[50px] w-[1px] bg-white"></div>
-      <button className="w-[70px]" onClick={() => navigate("/point")}>
-        포인트
+      <button className="w-[70px]" onClick={() => navigate("/userInfo")}>
+        내 정보
       </button>
     </div>
   );
